@@ -1,0 +1,30 @@
+name: Weekly Report
+
+on:
+  schedule:
+    # 每周一早上 1点 UTC 运行（对应北京时间周一早上 9点）
+    - cron: '0 1 * * 1'
+  workflow_dispatch:   # 允许手动触发
+
+jobs:
+  run-scout:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run scout script
+        env:
+          DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+          DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
+        run: python scout.py
